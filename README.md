@@ -1,1 +1,1 @@
-# Multiple-Sequence-Alignment
+# Multiple Sequence Alignment
