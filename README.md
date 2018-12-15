@@ -2,7 +2,7 @@
 Requirements
 ------------
 
-All the requirements can be installed via ```pip``` (pip3) by running:
+All the requirements can be installed via ```pip``` (```pip3```) by running:
 ```
 pip install -r requirements.txt
 ```
