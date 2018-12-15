@@ -1,1 +1,3 @@
 # Multiple Sequence Alignment
+Instructions
+-----------
