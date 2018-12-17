@@ -1,4 +1,5 @@
 import numpy as np
+import json
 
 
 def compute_profile(msa, alphabet):
@@ -194,10 +195,19 @@ def align_sequence_sequence_affine(v, w, delta):
     return score, traceback([v], [w], backtrace, start_level)
 
 
-def print_alignment(name, aln, scoring):
-    print(name, aln[0], sp_score(aln[1], scoring), sp_score_vanilla(aln[1], scoring))
-    for seq in aln[1]:
-        print(seq)
+def print_alignment(name, aln, scoring, labels=None, file=None):
+    if file:
+        json.dump(scoring, file)
+        print('', file=file)
+    print(name, file=file)
+    print('SP-score: %f'%sp_score(aln, scoring), file=file)
+    if labels:
+        for i,seq in enumerate(aln):
+            print(''.join(seq)+ '   <--   ' + labels[i], file=file)
+    else:
+        for seq in aln:
+            print(''.join(seq), file=file)
+
 
 
 def get_scoring_function(alphabet, match, mismatch, gap_open, gap_extend):

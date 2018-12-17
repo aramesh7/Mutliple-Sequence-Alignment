@@ -1,0 +1,9 @@
+data/human_india.txt
+data/human_daghestan.txt
+data/human_pakistan.txt
+data/human_nigerian.txt
+data/ape_gorilla.txt
+data/ape_bonobo.txt
+data/ape_gorilla.txt
+data/ape_chimp.txt
+data/ape_western_lowland.txt
