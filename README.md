@@ -55,3 +55,5 @@ You can say all modes of operation by running:
     - `-gen-seq-list`, `--gen-seq-list` : allows you to create a FASTA formatted .txt file of the segments 
         of sequences you are aligning. This is useful when cross-testing the program with other programs
         like CLUSTAL or MUSCLE.
+    - `-show-tree`, `--show-guide-tree`: will display a plot of the guide tree used to make the multiple alignment
+    and save it in .png format under argument `--save-guide-tree`. 

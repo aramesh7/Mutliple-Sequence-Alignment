@@ -1,0 +1,9 @@
+data/human_southern_italy.txt
+data/human_taiwan_native.txt
+data/human_india_kannada.txt
+data/human_nigerian.txt
+data/human_chinese.txt
+data/human_egyptian.txt
+data/human_filipino.txt
+data/human_navajo.txt
+data/human_american.txt

@@ -4,7 +4,7 @@ import argparse
 from scipy.cluster.hierarchy import linkage, dendrogram
 from matplotlib import pyplot as plt
 
-def progressive_alignment(sequences, scoring, alphabet):
+def progressive_alignment(sequences, scoring, alphabet, show_tree=False):
 
     # Initialize a distance matrix
     n = len(sequences)
@@ -12,7 +12,6 @@ def progressive_alignment(sequences, scoring, alphabet):
 
     # Fill the pairwise distance matrix
     keys = list(sequences.keys())
-    print(keys)
     for i in range(n):
         for j in range(i):
             D[i,j], alignment = utils.align_profile_profile([list(sequences[keys[i]])], [list(sequences[keys[j]])], scoring, alphabet)
@@ -29,14 +28,17 @@ def progressive_alignment(sequences, scoring, alphabet):
         clusters.append(alignment)
         labels.append(labels[int(Z[i][0])] + labels[int(Z[i][1])])
 
-
+    fig = None
     # Display guide tree
-    plt.figure(figsize=(10,10))
-    dendrogram(Z, labels=keys, leaf_rotation=90)
-    plt.title("Guide Tree for Given Sequence Data")
-    plt.tight_layout()
-    plt.show()
-    return clusters[-1], labels[-1]
+    if show_tree:
+        fig = plt.figure(figsize=(10,10))
+        dendrogram(Z, labels=keys, leaf_rotation=90)
+        plt.xlabel("Samples")
+        plt.ylabel("Distance/Scores")
+        plt.title("Guide Tree for Given Sequence Data")
+        plt.tight_layout()
+        plt.show()
+    return clusters[-1], labels[-1], fig
 
 def main(args, scoring, alphabet):
     input_file = args.input
@@ -44,7 +46,7 @@ def main(args, scoring, alphabet):
     sequences = {}
     with open(input_file) as f:
         for i,filename in enumerate(f.readlines()):
-            with open(filename[:-1]) as seq_file:
+            with open(filename.rstrip()) as seq_file:
                 sequences[filename.rsplit('.', 1)[0].split('/')[-1]] = seq_file.read().replace('\n', '')[args.seq_start:args.seq_end]
 
     if args.gen_seq_list:
@@ -54,22 +56,21 @@ def main(args, scoring, alphabet):
 
 
     # Run the main functions
-    aln, labels = progressive_alignment(sequences, scoring, alphabet)
+    aln, labels, figure = progressive_alignment(sequences, scoring, alphabet, args.show_guide_tree)
     utils.print_alignment("Final Alignment:", aln, scoring, labels=labels)
     if args.output:
         with open(args.output, 'w') as f:
             utils.print_alignment("Final Alignment:", aln, scoring, labels=labels, file=f)
 
-
-
+    if args.save_guide_tree and figure:
+        figure.savefig(args.save_guide_tree)
 
 if __name__ == "__main__":
 
     # Parse args and call main
     parser = argparse.ArgumentParser(description='A script that takes an input of 2 or more sequences and outputs a pogressive multiple sequence alignment')
     parser.add_argument('input', help='file path for .txt of list of input sequences')
-    parser.add_argument('-o', '--output', '--output-file', default='MSA_output.txt',
-                        help='file path for writing the output')
+    parser.add_argument('-o', '--output', '--output-file', help='file path for writing the output')
     parser.add_argument('-affine', '--affine', help='Specifies that affine gap penalties must be used when aligning sequences', action='store_true')
     parser.add_argument('scoring', help='file specifying the scoring matrix values as a .csv', default=None)
 
@@ -83,8 +84,10 @@ if __name__ == "__main__":
     parser.add_argument('-seq-start', help='The starting position in the sequences provided for segment alignment', type=int, default=0)
     parser.add_argument('-seq-end', help='The ending position in the sequences provided for segment alignment', type=int, default=100)
     parser.add_argument('-gen-seq-list', '--gen-seq-list', help='Generates an intermediate FASTA format file with all sequence segments being aligned', action='store_true')
+    parser.add_argument('-show-tree', '--show-guide-tree', help='When present, the code will generate a dendrogram of the clustered sequences with filenames as labels', action='store_true')
+    parser.add_argument('-save-guide-tree', '--save-guide-tree', help='Save the dendrogram of the clustered sequences to the filename provided with this flag')
     args = parser.parse_args()
-
+    print(args)
     alphabet_map = {
         'dna': ['A', 'C', 'G', 'T', '-'],
         'rna': ['A', 'C', 'G', 'U', '-']
